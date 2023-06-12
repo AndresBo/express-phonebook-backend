@@ -1,7 +1,19 @@
 const express = require('express')
 const app = express()
 
+var morgan = require('morgan')
+
 app.use(express.json())
+
+const requestLogger = (request, response, next) => {
+  console.log('Method:', request.method)
+  console.log('Path:  ', request.path)
+  console.log('Body:  ', request.body)
+  console.log('---')
+  next()
+}
+
+app.use(requestLogger)
 
 
 let persons = [
@@ -103,6 +115,13 @@ app.get('/info', (request, response) => {
   const size = persons.length
   response.send(`<p> Phonebook has info for ${size} people </p> <p> ${Date()} </p>`)
 })
+
+
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: 'unknown endpoint' })
+}
+
+app.use(unknownEndpoint)
 
 
 const PORT = 3000
