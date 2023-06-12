@@ -5,6 +5,8 @@ var morgan = require('morgan')
 
 app.use(express.json())
 
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms'))
+
 const requestLogger = (request, response, next) => {
   console.log('Method:', request.method)
   console.log('Path:  ', request.path)
