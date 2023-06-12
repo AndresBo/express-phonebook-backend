@@ -77,6 +77,15 @@ app.post('/api/persons', (request, response) => {
       error: 'content missing'
     })
   }
+  // check name does not exists:
+  const nameCheck = persons.find(person => person.name === body.name)
+  console.log(nameCheck)
+  if (nameCheck) {
+      return response.status(400).json({
+        error: 'name must be unique'
+      })
+    } 
+
   // create new person object using request data
   const person = {
     id: generateId(),
@@ -94,9 +103,6 @@ app.get('/info', (request, response) => {
   const size = persons.length
   response.send(`<p> Phonebook has info for ${size} people </p> <p> ${Date()} </p>`)
 })
-
-
-
 
 
 const PORT = 3000
