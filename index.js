@@ -1,7 +1,9 @@
 const express = require('express')
 const app = express()
 
-
+// allow request from other origins by using cors:
+const cors = require('cors')
+app.use(cors())
 
 var morgan = require('morgan')
 
