@@ -1,6 +1,9 @@
 const express = require('express')
 const app = express()
 
+// allow express to serve static files, in this case the file located build/index.html:
+app.use(express.static('build'))
+
 // allow request from other origins by using cors:
 const cors = require('cors')
 app.use(cors())
