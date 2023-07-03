@@ -15,6 +15,7 @@ const cors = require('cors')
 app.use(cors())
 
 var morgan = require('morgan')
+const person = require('./models/person')
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms'))
 
 const requestLogger = (request, response, next) => {
@@ -68,16 +69,9 @@ app.get('/api/persons', (request, response) => {
 
 
 app.get('/api/persons/:id', (request, response) => {
-  // get requested id parameter from URL:
-  const id = Number(request.params.id)
-  // find person 
-  const person = persons.find(person => person.id === id)
-  // validate person exists:
-  if(person) {
+  Person.findById(request.params.id).then(person => {
     response.json(person)
-  } else {
-    response.status(404).end()
-  }
+  })
 })
 
 
@@ -96,29 +90,26 @@ app.post('/api/persons', (request, response) => {
   const body = request.body
   // validate request body data
   if (!body.name || !body.number) {
-    return response.status(400).json({
-      error: 'content missing'
-    })
+    return response.status(400).json({ error: 'content missing' })
   }
-  // check name does not exists:
-  const nameCheck = persons.find(person => person.name === body.name)
-  console.log(nameCheck)
-  if (nameCheck) {
-      return response.status(400).json({
-        error: 'name must be unique'
-      })
-    } 
+  // !!!check name does not exists: - MODIFY TO WORK WITH mongoDB
+  // const nameCheck = persons.find(person => person.name === body.name)
+  // console.log(nameCheck)
+  // if (nameCheck) {
+  //     return response.status(400).json({
+  //       error: 'name must be unique'
+  //     })
+  //   } 
 
-  // create new person object using request data
-  const person = {
-    id: generateId(),
+  // create new person object using Note constructor function
+  const person = new Person({
     name: body.name,
     number: body.number,
-  }
+  })
   // add to persons array
-  persons = persons.concat(person)
-  
-  response.json(person)
+  person.save().then(savedPerson => {
+    response.json(savedPerson)
+  })
 })
 
 
