@@ -20,7 +20,7 @@ const personSchema = new mongoose.Schema({
 // define the model
 const Person = mongoose.model('Person', personSchema)
 
-// if three arguments are given, save new person to db. Else display all entries in db:
+// if three arguments are given, save new person to db. Else display all entries in db to terminal:
 if (process.argv.length == 5) {
   
   const person = new Person({

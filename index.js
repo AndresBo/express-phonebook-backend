@@ -1,6 +1,10 @@
 const express = require('express')
 const app = express()
 
+app.use(express.json())
+
+const Note = require('./models/person')
+
 // allow express to serve static files, in this case the file located build/index.html:
 app.use(express.static('build'))
 
@@ -9,9 +13,6 @@ const cors = require('cors')
 app.use(cors())
 
 var morgan = require('morgan')
-
-app.use(express.json())
-
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms'))
 
 const requestLogger = (request, response, next) => {
@@ -21,9 +22,7 @@ const requestLogger = (request, response, next) => {
   console.log('---')
   next()
 }
-
 app.use(requestLogger)
-
 
 let persons = [
     { 
@@ -60,7 +59,9 @@ const generateId = () => {
 
 
 app.get('/api/persons', (request, response) => {
-  response.json(persons)
+  Person.find({}).then(person => {
+    response.json(person)
+  })
 })
 
 
@@ -128,10 +129,11 @@ app.get('/info', (request, response) => {
 const unknownEndpoint = (request, response) => {
   response.status(404).send({ error: 'unknown endpoint' })
 }
-
+// handle unknown endpoints:
 app.use(unknownEndpoint)
 
 
 const PORT = process.env.PORT || 3001
-app.listen(PORT)
-console.log(`server running on ${PORT}`)
+app.listen(PORT, () => {
+  console.log(`server running on ${PORT}`)
+})
