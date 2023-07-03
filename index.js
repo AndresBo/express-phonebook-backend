@@ -1,9 +1,11 @@
+require('dotenv').config()
+
 const express = require('express')
 const app = express()
 
 app.use(express.json())
 
-const Note = require('./models/person')
+const Person = require('./models/person')
 
 // allow express to serve static files, in this case the file located build/index.html:
 app.use(express.static('build'))
@@ -133,7 +135,7 @@ const unknownEndpoint = (request, response) => {
 app.use(unknownEndpoint)
 
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT 
 app.listen(PORT, () => {
   console.log(`server running on ${PORT}`)
 })
