@@ -81,13 +81,12 @@ app.get('/api/persons/:id', (request, response, next) => {
 })
 
 
-app.delete('/api/persons/:id', (request, response) => {
-  // get requested id parameter from URL:
-  const id = Number(request.params.id)
-  // delete person
-  persons = persons.filter(person => person.id !== id)
-
-  response.status(204).end()
+app.delete('/api/persons/:id', (request, response, next) => {
+  Person.findByIdAndRemove(request.params.id)
+    .then(result => {
+      response.status(204).end()
+    })
+    .catch(error => next(error))
 })
 
 
