@@ -134,8 +134,16 @@ app.put('/api/persons/:id', (request, response, next) => {
 
 
 app.get('/info', (request, response) => {
-  const size = persons.length
-  response.send(`<p> Phonebook has info for ${size} people </p> <p> ${Date()} </p>`)
+  Person.count()
+    .then(count => {
+      response.json(
+        { NumberOfPersons:count, 
+          date:Date() 
+        }
+      )
+    })
+    .catch((error) => next(error) )
+  //response.send(`<p> Phonebook has info for ${size} people </p> <p> ${Date()} </p>`)
 })
 
 
