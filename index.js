@@ -68,10 +68,16 @@ app.get('/api/persons', (request, response) => {
 })
 
 
-app.get('/api/persons/:id', (request, response) => {
-  Person.findById(request.params.id).then(person => {
-    response.json(person)
-  })
+app.get('/api/persons/:id', (request, response, next) => {
+  Person.findById(request.params.id)
+    .then(person => {
+      if (person) {
+        response.json(person)
+      } else {
+        response.status(404).end()
+      }  
+    })// next function needs a parameter(error) to continue to errorHandler middleware:
+    .catch(error => next(error))
 })
 
 
@@ -124,6 +130,20 @@ const unknownEndpoint = (request, response) => {
 }
 // handle unknown endpoints:
 app.use(unknownEndpoint)
+
+
+// error handling middleware
+const errorHandler = (error, request, response, next) => {
+  console.log(error.message)
+
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' })
+  }
+
+  next(error)
+}
+
+app.use(errorHandler)
 
 
 const PORT = process.env.PORT 
