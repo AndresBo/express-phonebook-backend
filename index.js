@@ -90,31 +90,21 @@ app.delete('/api/persons/:id', (request, response, next) => {
 })
 
 
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
   // get new person from request object
   const body = request.body
-  // validate request body data
-  if (!body.name || !body.number) {
-    return response.status(400).json({ error: 'content missing' })
-  }
-  // !!!check name does not exists: - MODIFY TO WORK WITH mongoDB
-  // const nameCheck = persons.find(person => person.name === body.name)
-  // console.log(nameCheck)
-  // if (nameCheck) {
-  //     return response.status(400).json({
-  //       error: 'name must be unique'
-  //     })
-  //   } 
-
+  
   // create new person object using Note constructor function
   const person = new Person({
     name: body.name,
     number: body.number,
   })
   // add to persons array
-  person.save().then(savedPerson => {
-    response.json(savedPerson)
-  })
+  person.save()
+    .then(savedPerson => {
+      response.json(savedPerson)
+    })
+    .catch(error => next(error))
 })
 
 
