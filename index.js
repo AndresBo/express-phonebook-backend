@@ -1,6 +1,7 @@
 require('dotenv').config()
 
 const express = require('express')
+
 const app = express()
 
 app.use(express.json())
@@ -27,38 +28,38 @@ const requestLogger = (request, response, next) => {
 }
 app.use(requestLogger)
 
-let persons = [
-    { 
-      "id": 1,
-      "name": "Arto Hellas", 
-      "number": "0421 233 427"
-    },
-    { 
-      "id": 2,
-      "name": "Ada Lovelace", 
-      "number": "0445 233 427"
-    },
-    { 
-      "id": 3,
-      "name": "Dan Abramov", 
-      "number": "0445 233 555"
-    },
-    { 
-      "id": 4,
-      "name": "Mary Poppendieck", 
-      "number": "0455 333 567"
-    }
-]
+// let persons = [
+//     { 
+//       "id": 1,
+//       "name": "Arto Hellas", 
+//       "number": "0421 233 427"
+//     },
+//     { 
+//       "id": 2,
+//       "name": "Ada Lovelace", 
+//       "number": "0445 233 427"
+//     },
+//     { 
+//       "id": 3,
+//       "name": "Dan Abramov", 
+//       "number": "0445 233 555"
+//     },
+//     { 
+//       "id": 4,
+//       "name": "Mary Poppendieck", 
+//       "number": "0455 333 567"
+//     }
+// ]
 
 
-const generateId = () => {
-  // find the person object with largest id property in the persons array:
-  const maxId = persons.length > 0 
-    ? Math.max(...persons.map(person => person.id)) 
-    : 0
+// const generateId = () => {
+//   // find the person object with largest id property in the persons array:
+//   const maxId = persons.length > 0 
+//     ? Math.max(...persons.map(person => person.id)) 
+//     : 0
   
-  return maxId + 1
-}
+//   return maxId + 1
+// }
 
 
 app.get('/api/persons', (request, response) => {
@@ -75,7 +76,7 @@ app.get('/api/persons/:id', (request, response, next) => {
         response.json(person)
       } else {
         response.status(404).end()
-      }  
+      }
     })// next function needs a parameter(error) to continue to errorHandler middleware:
     .catch(error => next(error))
 })
@@ -93,7 +94,6 @@ app.delete('/api/persons/:id', (request, response, next) => {
 app.post('/api/persons', (request, response, next) => {
   // get new person from request object
   const body = request.body
-  
   // create new person object using Note constructor function
   const person = new Person({
     name: body.name,
@@ -110,12 +110,12 @@ app.post('/api/persons', (request, response, next) => {
 
 app.put('/api/persons/:id', (request, response, next) => {
   const { name, number } = request.body
-  
+
   Person.findByIdAndUpdate(
-    request.params.id, 
-    { name, number }, 
+    request.params.id,
+    { name, number },
     { new: true, runValidators: true, context: 'query' }
-    )
+  )
     .then(updatedPerson => {
       response.json(updatedPerson)
     })
@@ -123,12 +123,12 @@ app.put('/api/persons/:id', (request, response, next) => {
 })
 
 
-app.get('/info', (request, response) => {
+app.get('/info', (request, response, next) => {
   Person.count()
     .then(count => {
       response.json(
-        { NumberOfPersons:count, 
-          date:Date() 
+        { NumberOfPersons:count,
+          date:Date()
         }
       )
     })
@@ -160,7 +160,7 @@ const errorHandler = (error, request, response, next) => {
 app.use(errorHandler)
 
 
-const PORT = process.env.PORT 
+const PORT = process.env.PORT
 app.listen(PORT, () => {
   console.log(`server running on ${PORT}`)
 })

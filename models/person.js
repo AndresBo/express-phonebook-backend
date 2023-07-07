@@ -6,12 +6,12 @@ mongoose.set('strictQuery',false)
 const url = process.env.MONGODB_URI
 
 mongoose.connect(url)
-    .then(result => {
-        console.log('connected to MongoDB')
-    })
-    .catch((error) => {
-        console.log('error connecting to MongoDB: ', error.message)
-    })
+  .then(result => {
+    console.log('connected to MongoDB')
+  })
+  .catch((error) => {
+    console.log('error connecting to MongoDB: ', error.message)
+  })
 
 const personSchema = new mongoose.Schema({
   name: {
@@ -23,7 +23,7 @@ const personSchema = new mongoose.Schema({
     type: String,
     validate: {
       validator: function(v) {
-        return /\d{2} \d{4} \d{4}/.test(v);
+        return /\d{2} \d{4} \d{4}/.test(v)
       },
       message: props => `${props.value} is not a valid number, enter as 04 XXXX XXXX`
     },
