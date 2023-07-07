@@ -1,32 +1,34 @@
-require('dotenv').config()
+//require('dotenv').config()
 
-const express = require('express')
+//const express = require('express')
 
-const app = express()
+const app = require('./app')
+const config = require('./utils/config')
+const logger = require('./utils/logger')
 
-app.use(express.json())
+//app.use(express.json())
 
-const Person = require('./models/person')
+//const Person = require('./models/person')
 
 // allow express to serve static files, in this case the file located build/index.html:
-app.use(express.static('build'))
+//app.use(express.static('build'))
 
 // allow request from other origins by using cors:
-const cors = require('cors')
-app.use(cors())
+// const cors = require('cors')
+// app.use(cors())
 
-var morgan = require('morgan')
-const person = require('./models/person')
-app.use(morgan(':method :url :status :res[content-length] - :response-time ms'))
+//var morgan = require('morgan')
+//const person = require('./models/person')
+//app.use(morgan(':method :url :status :res[content-length] - :response-time ms'))
 
-const requestLogger = (request, response, next) => {
-  console.log('Method:', request.method)
-  console.log('Path:  ', request.path)
-  console.log('Body:  ', request.body)
-  console.log('---')
-  next()
-}
-app.use(requestLogger)
+// const requestLogger = (request, response, next) => {
+//   console.log('Method:', request.method)
+//   console.log('Path:  ', request.path)
+//   console.log('Body:  ', request.body)
+//   console.log('---')
+//   next()
+// }
+// app.use(requestLogger)
 
 // let persons = [
 //     { 
@@ -138,30 +140,30 @@ app.use(requestLogger)
 
 
 
-const unknownEndpoint = (request, response) => {
-  response.status(404).send({ error: 'unknown endpoint' })
-}
-// handle unknown endpoints:
-app.use(unknownEndpoint)
+// const unknownEndpoint = (request, response) => {
+//   response.status(404).send({ error: 'unknown endpoint' })
+// }
+// // handle unknown endpoints:
+// app.use(unknownEndpoint)
 
 
 // error handling middleware
-const errorHandler = (error, request, response, next) => {
-  console.log(error.message)
+// const errorHandler = (error, request, response, next) => {
+//   console.log(error.message)
 
-  if (error.name === 'CastError') {
-    return response.status(400).send({ error: 'malformatted id' })
-  } else if (error.name === 'ValidationError') {
-    return response.status(400).json({ error: error.message })
-  }
+//   if (error.name === 'CastError') {
+//     return response.status(400).send({ error: 'malformatted id' })
+//   } else if (error.name === 'ValidationError') {
+//     return response.status(400).json({ error: error.message })
+//   }
 
-  next(error)
-}
+//   next(error)
+// }
 
-app.use(errorHandler)
+// app.use(errorHandler)
 
 
-const PORT = process.env.PORT
-app.listen(PORT, () => {
-  console.log(`server running on ${PORT}`)
+//const PORT = process.env.PORT
+app.listen(config.PORT, () => {
+  logger.info(`server running on ${config.PORT}`)
 })
