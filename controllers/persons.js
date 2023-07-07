@@ -2,6 +2,18 @@ const personsRouter = require('express').Router()
 const Person = require('../models/person')
 
 
+personsRouter.get('/info', (request, response, next) => {
+  Person.count()
+    .then(count => {
+      response.json(
+        { NumberOfPersons:count,
+          date:Date()
+        }
+      )
+    })
+    .catch((error) => next(error) )
+})
+
 personsRouter.get('/', (request, response) => {
   Person.find({}).then(person => {
     response.json(person)
@@ -56,18 +68,6 @@ personsRouter.put('/:id', (request, response, next) => {
       response.json(updatedPerson)
     })
     .catch(error => next(error))
-})
-
-personsRouter.get('/info', (request, response, next) => {
-  Person.count()
-    .then(count => {
-      response.json(
-        { NumberOfPersons:count,
-          date:Date()
-        }
-      )
-    })
-    .catch((error) => next(error) )
 })
 
 
