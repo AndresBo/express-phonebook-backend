@@ -3,13 +3,13 @@ const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 
-// wrap express application from app.js with supertest function into a 'superagent' object
+// wrap express application from app.js with supertest function to form 'superagent' object
 const api = supertest(app)
 
 const helper = require('./test_helper')
 const Person = require('../models/person')
 
-// clear and initialize the database by saving two notes
+// clear and initialize the database by saving two notes before every test
 beforeEach(async () => {
   await Person.deleteMany({})
 
@@ -40,6 +40,21 @@ describe('when there is initially some persons saved', () => {
     const names = response.body.map(person => person.name)
 
     expect(names).toContain('Homer Simpson')
+  })
+})
+
+describe('viewing a specific person', () => {
+  test('succeeds with a valid id', async () => {
+    const personsAtStart = await helper.personsInDb()
+    console.log('typeof personsAtStart', typeof personsAtStart)
+    const personToView = personsAtStart[0]
+
+    const resultPerson = await api
+      .get(`/api/persons/${personToView.id}`)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+    console.log('typeof result person', typeof resultPerson)
+    expect(resultPerson.body).toEqual(personToView)
   })
 })
 
