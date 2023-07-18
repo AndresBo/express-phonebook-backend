@@ -94,6 +94,22 @@ describe('addition of a new person', () => {
     const names = personsAtEnd.map(person => person.name)
     expect(names).toContain('Van Helsing')
   })
+
+  test('fails with status code 400 if data is invalid', async () => {
+    // new person missing name property
+    const newPerson = {
+      number: '04 2123 2345'
+    }
+
+    await api
+      .post('/api/persons')
+      .send(newPerson)
+      .expect(400)
+
+    const personsAtEnd = await helper.personsInDb()
+
+    expect(personsAtEnd).toHaveLength(helper.initialPersons.length)
+  })
 })
 
 // close the database once all tests have run
