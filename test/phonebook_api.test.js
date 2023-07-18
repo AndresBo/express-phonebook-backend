@@ -65,6 +65,14 @@ describe('viewing a specific person', () => {
       .get(`/api/persons/${validNonExistingId}`)
       .expect(404)
   })
+
+  test('fails with statuscode 400 if id is invalid', async () => {
+    const invalidId = '45678ddd'
+
+    await api
+      .get(`/api/persons/${invalidId}`)
+      .expect(400)
+  })
 })
 
 // close the database once all tests have run
