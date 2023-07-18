@@ -75,6 +75,27 @@ describe('viewing a specific person', () => {
   })
 })
 
+describe('addition of a new person', () => {
+  test('succeeds with valid data', async () => {
+    const newPerson = {
+      name: 'Van Helsing',
+      number: '04 0101 0101'
+    }
+
+    await api
+      .post('/api/persons')
+      .send(newPerson)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    const personsAtEnd = await helper.personsInDb()
+    expect(personsAtEnd).toHaveLength(helper.initialPersons.length + 1)
+
+    const names = personsAtEnd.map(person => person.name)
+    expect(names).toContain('Van Helsing')
+  })
+})
+
 // close the database once all tests have run
 afterAll(async () => {
   await mongoose.connection.close()

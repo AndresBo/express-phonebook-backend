@@ -51,7 +51,7 @@ personsRouter.post('/', (request, response, next) => {
   // add to persons array
   person.save()
     .then(savedPerson => {
-      response.json(savedPerson)
+      response.status(201).json(savedPerson)
     })
     .catch(error => next(error))
 })
