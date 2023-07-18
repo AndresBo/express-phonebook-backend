@@ -1,18 +1,5 @@
 const mongoose = require('mongoose')
 
-// mongoose.set('strictQuery',false)
-
-// // const password = process.argv[2]
-// const url = process.env.MONGODB_URI
-
-// mongoose.connect(url)
-//   .then(result => {
-//     console.log('connected to MongoDB')
-//   })
-//   .catch((error) => {
-//     console.log('error connecting to MongoDB: ', error.message)
-//   })
-
 const personSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -31,6 +18,7 @@ const personSchema = new mongoose.Schema({
     required: [true, 'Please enter contact number']
   }
 })
+
 personSchema.set('toJSON', {
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString()
@@ -38,4 +26,5 @@ personSchema.set('toJSON', {
     delete returnedObject.__v
   }
 })
+
 module.exports = mongoose.model('Person', personSchema)
