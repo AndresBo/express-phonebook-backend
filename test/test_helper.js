@@ -16,7 +16,20 @@ const personsInDb = async () => {
   return persons.map(person => person.toJSON())
 }
 
+// helper function that creates a new person, immediately deletes it and returns the id of deleted person
+const nonExistingId = async () => {
+  const person = new Person( {
+    name: 'willremovesoon',
+    number: '04 0000 0000'
+  })
+  await person.save()
+  await person.deleteOne()
+
+  return person.id.toString()
+}
+
 module.exports = {
   initialPersons,
-  personsInDb
+  personsInDb,
+  nonExistingId
 }

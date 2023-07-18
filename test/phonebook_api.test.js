@@ -56,6 +56,15 @@ describe('viewing a specific person', () => {
     console.log('typeof result person', typeof resultPerson)
     expect(resultPerson.body).toEqual(personToView)
   })
+
+  test('fails with statuscode 404 if person does not exist', async () => {
+    const validNonExistingId = await helper.nonExistingId()
+    console.log('non existing id', validNonExistingId)
+
+    await api
+      .get(`/api/persons/${validNonExistingId}`)
+      .expect(404)
+  })
 })
 
 // close the database once all tests have run
