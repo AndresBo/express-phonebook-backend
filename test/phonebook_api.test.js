@@ -112,6 +112,24 @@ describe('addition of a new person', () => {
   })
 })
 
+describe('deletion of a person', () => {
+  test('succeeds with status code 204 when id is valid', async () => {
+    const personsAtStart = await helper.personsInDb()
+
+    const personToDelete = personsAtStart[0]
+
+    await api
+      .delete(`/api/persons/${personToDelete.id}`)
+      .expect(204)
+
+    const personsAtEnd = await helper.personsInDb()
+
+    expect(personsAtEnd).toHaveLength(helper.initialPersons.length - 1)
+
+    expect(personsAtEnd).not.toContain(personToDelete)
+  })
+})
+
 // close the database once all tests have run
 afterAll(async () => {
   await mongoose.connection.close()
