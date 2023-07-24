@@ -62,18 +62,20 @@ personsRouter.post('/', async (request, response, next) => {
 
 })
 
-personsRouter.put('/:id', (request, response, next) => {
-  const { name, number } = request.body
+personsRouter.put('/:id', async (request, response, next) => {
+  try {
+    const { name, number } = request.body
+    // note findByIdAndUpdate receives a JS object, not a new person object created with Person contructor.
+    // {new: true} is necessary to return updated document instead of the original.
+    const updatedPerson = await Person.findByIdAndUpdate(request.params.id,
+      { name, number },
+      { new: true, runValidators: true, context: 'query' }
+    )
 
-  Person.findByIdAndUpdate(
-    request.params.id,
-    { name, number },
-    { new: true, runValidators: true, context: 'query' }
-  )
-    .then(updatedPerson => {
-      response.json(updatedPerson)
-    })
-    .catch(error => next(error))
+    response.json(updatedPerson)
+  } catch(error) {
+    next(error)
+  }
 })
 
 
