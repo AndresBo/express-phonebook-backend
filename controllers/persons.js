@@ -42,20 +42,23 @@ personsRouter.delete('/:id', (request, response, next) => {
     .catch(error => next(error))
 })
 
-personsRouter.post('/', (request, response, next) => {
-  // get new person from request object
-  const body = request.body
-  // create new person object using Note constructor function
-  const person = new Person({
-    name: body.name,
-    number: body.number,
-  })
-  // add to persons array
-  person.save()
-    .then(savedPerson => {
-      response.status(201).json(savedPerson)
+personsRouter.post('/', async (request, response, next) => {
+  try {
+    // get new person from request object
+    const body = request.body
+    // create new person object using Note constructor function
+    const person = new Person({
+      name: body.name,
+      number: body.number,
     })
-    .catch(error => next(error))
+    // add to persons array
+    const savedPerson = await person.save()
+
+    response.status(201).json(savedPerson)
+  } catch(error) {
+    next(error)
+  }
+
 })
 
 personsRouter.put('/:id', (request, response, next) => {
