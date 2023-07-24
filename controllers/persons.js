@@ -19,16 +19,19 @@ personsRouter.get('/', async (request, response) => {
   response.json(persons)
 })
 
-personsRouter.get('/:id', (request, response, next) => {
-  Person.findById(request.params.id)
-    .then(person => {
-      if (person) {
-        response.json(person)
-      } else {
-        response.status(404).end()
-      }
-    })// next function needs a parameter(error) to continue to errorHandler middleware:
-    .catch(error => next(error))
+personsRouter.get('/:id', async (request, response, next) => {
+  try {
+    const person = await Person.findById(request.params.id)
+
+    if (person) {
+      response.json(person)
+    } else {
+      response.status(404).end()
+    }
+  } catch(error) {
+    // next function needs a parameter(error) to continue to errorHandler middleware:
+    next(error)
+  }
 })
 
 personsRouter.delete('/:id', (request, response, next) => {
