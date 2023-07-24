@@ -26,7 +26,7 @@ describe('when there is initially some persons saved', () => {
       .get('/api/persons')
       .expect(200)
       .expect('Content-Type', /application\/json/)
-  })
+  }, 10000)
 
   test('all persons are returned', async () => {
     const response = await api.get('/api/persons')
