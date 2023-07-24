@@ -14,10 +14,9 @@ personsRouter.get('/info', (request, response, next) => {
     .catch((error) => next(error) )
 })
 
-personsRouter.get('/', (request, response) => {
-  Person.find({}).then(person => {
-    response.json(person)
-  })
+personsRouter.get('/', async (request, response) => {
+  const persons = await Person.find({})
+  response.json(persons)
 })
 
 personsRouter.get('/:id', (request, response, next) => {
