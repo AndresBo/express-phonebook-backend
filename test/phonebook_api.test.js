@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-// user supertest package that helps write test for testing the API
+// use supertest package that helps write test for testing the API
 const supertest = require('supertest')
 const app = require('../app')
 
