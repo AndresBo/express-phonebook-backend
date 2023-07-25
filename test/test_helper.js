@@ -1,4 +1,5 @@
 const Person = require('../models/person')
+const User = require('../models/user')
 
 const initialPersons = [
   {
@@ -16,6 +17,11 @@ const personsInDb = async () => {
   return persons.map(person => person.toJSON())
 }
 
+const usersInDb = async () => {
+  const users = await User.find({})
+  return users.map(user => user.toJSON())
+}
+
 // helper function that creates a new person, immediately deletes it and returns the id of deleted person
 const nonExistingId = async () => {
   const person = new Person( {
@@ -31,5 +37,6 @@ const nonExistingId = async () => {
 module.exports = {
   initialPersons,
   personsInDb,
-  nonExistingId
+  nonExistingId,
+  usersInDb
 }
