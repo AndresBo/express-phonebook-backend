@@ -2,6 +2,12 @@ const bcrypt = require('bcrypt')
 const usersRouter = require('express').Router()
 const User = require('../models/user')
 
+
+usersRouter.get('/', async (request, response) => {
+  const users = await User.find({})
+  response.json(users)
+})
+
 usersRouter.post('/', async (request, response, next) => {
   const { username, name, password, admin } = request.body
   // Check password given. This is different from the passwordHash that is saved to db and
@@ -19,7 +25,7 @@ usersRouter.post('/', async (request, response, next) => {
     username,
     name,
     passwordHash,
-    admin
+    admin: admin || false
   })
   try {
     const savedUser = await user.save()
