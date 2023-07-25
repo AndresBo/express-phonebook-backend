@@ -15,7 +15,13 @@ describe('when there is initially one user in db', () => {
     await User.deleteMany({})
     // create a new user
     const passwordHash = await bcrypt.hash('password', 10)
-    const user = new User({ username: 'test', passwordHash, name: 'test', admin: false })
+
+    const user = new User({
+      username: 'test',
+      passwordHash,
+      name: 'test',
+      admin: false
+    })
 
     await user.save()
   })
@@ -45,7 +51,7 @@ describe('when there is initially one user in db', () => {
 
   test('fails with proper status code and message if username already taken', async () => {
     const usersAtStart = await helper.usersInDb()
-    console.log('users at start', usersAtStart)
+
     const newUser = {
       username: 'test',
       name: 'test',
@@ -64,4 +70,90 @@ describe('when there is initially one user in db', () => {
     const usersAtEnd = await helper.usersInDb()
     expect(usersAtEnd).toEqual(usersAtStart)
   },)
+
+  test('fails with proper status code and message if no username provided', async () => {
+    const usersAtStart = await helper.usersInDb()
+
+    const newUser = {
+      name: 'test',
+      password: 'password',
+      admin: false
+    }
+
+    const result = await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    expect(result.body.error).toContain('Username is required')
+
+    const usersAtEnd = await helper.usersInDb()
+    expect(usersAtEnd).toEqual(usersAtStart)
+  })
+
+  test('fails with proper status code and message if username is too short', async () => {
+    const usersAtStart = await helper.usersInDb()
+
+    const newUser = {
+      username: 'te',
+      name: 'test',
+      password: 'password',
+      admin: false
+    }
+
+    const result = await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    expect(result.body.error).toContain('Username is too short')
+
+    const usersAtEnd = await helper.usersInDb()
+    expect(usersAtEnd).toEqual(usersAtStart)
+  })
+
+  test('fails with proper status code and message if password not provided', async () => {
+    const usersAtStart = await helper.usersInDb()
+
+    const newUser = {
+      username: 'test',
+      name: 'test',
+      admin: false
+    }
+
+    const result = await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    expect(result.body.error).toContain('password is required')
+
+    const usersAtEnd = await helper.usersInDb()
+    expect(usersAtEnd).toEqual(usersAtStart)
+  })
+
+  test('fails with proper status code and message if password is too short', async () => {
+    const usersAtStart = await helper.usersInDb()
+
+    const newUser = {
+      username: 'test',
+      name: 'test',
+      password: 'pa',
+      admin: false
+    }
+
+    const result = await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    expect(result.body.error).toContain('password must be longer than 3 characters')
+
+    const usersAtEnd = await helper.usersInDb()
+    expect(usersAtEnd).toEqual(usersAtStart)
+  })
 })
