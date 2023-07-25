@@ -2,9 +2,10 @@ const bcrypt = require('bcrypt')
 const usersRouter = require('express').Router()
 const User = require('../models/user')
 
-usersRouter.post('/', async (request, response) => {
+usersRouter.post('/', async (request, response, next) => {
   const { username, name, password, admin } = request.body
-
+  // Check password given. This is different from the passwordHash that is saved to db and
+  // why not to check restrictions using mongoose validations in user schema.
   if (!password) {
     return response.status(400).json({ error: 'password is required' })
   } else if (password.length < 3) {
@@ -20,10 +21,13 @@ usersRouter.post('/', async (request, response) => {
     passwordHash,
     admin
   })
+  try {
+    const savedUser = await user.save()
 
-  const savedUser = await user.save()
-
-  response.status(201).json(savedUser)
+    response.status(201).json(savedUser)
+  } catch(error) {
+    next(error)
+  }
 })
 
 module.exports = usersRouter
