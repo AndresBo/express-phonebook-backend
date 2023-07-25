@@ -1,11 +1,12 @@
 const mongoose = require('mongoose')
-
+const uniqueValidator = require('mongoose-unique-validator')
 // test password restrictions with controller, not mongoose validation.
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
     required: [true, 'Username is required'],
-    minLength: [3, 'Username is too short']
+    minLength: [3, 'Username is too short'],
+    unique: true
   },
   name: {
     type: String,
@@ -18,6 +19,8 @@ const userSchema = new mongoose.Schema({
     required: true
   }
 })
+
+userSchema.plugin(uniqueValidator)
 // Use the 'set' method of the schema to modify the toJSON
 // method of the schema used on every instance. With the objective of changing the object
 // _id into the string id. Also deletes the passwordHash and mongo versioning field __v
