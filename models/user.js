@@ -18,15 +18,17 @@ const userSchema = new mongoose.Schema({
     required: true
   }
 })
-
-// userSchema.set('toJSON', {
-//   transform: (document, returnedObject) => {
-//     returnedObject.id = returnedObject._id.toString()
-//     delete returnedObject._id
-//     delete returnedObject.__v
-//     delete returnedObject.passwordHash
-//   }
-// })
+// Use the 'set' method of the schema to modify the toJSON
+// method of the schema used on every instance. With the objective of changing the object
+// _id into the string id. Also deletes the passwordHash and mongo versioning field __v
+userSchema.set('toJSON', {
+  transform: (document, returnedObject) => {
+    returnedObject.id = returnedObject._id.toString()
+    delete returnedObject._id
+    delete returnedObject.__v
+    delete returnedObject.passwordHash
+  }
+})
 
 const User = mongoose.model('User', userSchema)
 
