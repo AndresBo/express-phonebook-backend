@@ -71,7 +71,7 @@ personsRouter.post('/', async (request, response, next) => {
     if (!decodedToken.id) {
       return response.status(401).json({ error: 'token invalid' })
     }
-    // find user trying to delete document
+    // find user trying to post document
     const user = await User.findById(decodedToken.id)
     // check if user is admin
     if (!user.admin) {
@@ -94,6 +94,16 @@ personsRouter.post('/', async (request, response, next) => {
 
 personsRouter.put('/:id', async (request, response, next) => {
   try {
+    const decodedToken = jwt.verify(request.token, process.env.SECRET)
+    if (!decodedToken.id) {
+      return response.status(401).json({ error: 'token invalid' })
+    }
+
+    const user = await User.findById(decodedToken.id)
+    if (!user.admin) {
+      return response.status(401).json({ error: 'unauthorized to post new persons' })
+    }
+
     const { name, number } = request.body
     // note findByIdAndUpdate receives a JS object, not a new person object created with Person contructor.
     // {new: true} is necessary to return updated document instead of the original.
