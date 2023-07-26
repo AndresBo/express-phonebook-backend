@@ -58,20 +58,20 @@ describe('when there is initially some persons saved', () => {
 describe('viewing a specific person', () => {
   test('succeeds with a valid id', async () => {
     const personsAtStart = await helper.personsInDb()
-    console.log('typeof personsAtStart', typeof personsAtStart)
+
     const personToView = personsAtStart[0]
 
     const resultPerson = await api
       .get(`/api/persons/${personToView.id}`)
       .expect(200)
       .expect('Content-Type', /application\/json/)
-    console.log('typeof result person', typeof resultPerson)
+
     expect(resultPerson.body).toEqual(personToView)
   })
 
   test('fails with statuscode 404 if person does not exist', async () => {
     const validNonExistingId = await helper.nonExistingId()
-    console.log('non existing id', validNonExistingId)
+
 
     await api
       .get(`/api/persons/${validNonExistingId}`)
@@ -137,13 +137,25 @@ describe('addition of a new person', () => {
 })
 
 describe('deletion of a person', () => {
-  test('succeeds with status code 204 when id is valid', async () => {
+  test('succeeds with status code 204 when id is valid and user is authorized', async () => {
+    const validUser = {
+      username: 'mario',
+      password: 'password'
+    }
+
+    const loggedUser = await api
+      .post('/api/login')
+      .send(validUser)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
     const personsAtStart = await helper.personsInDb()
 
     const personToDelete = personsAtStart[0]
 
     await api
       .delete(`/api/persons/${personToDelete.id}`)
+      .set('Authorization', `Bearer ${loggedUser.body.token}`)
       .expect(204)
 
     const personsAtEnd = await helper.personsInDb()
