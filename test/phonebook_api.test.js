@@ -166,6 +166,71 @@ describe('deletion of a person', () => {
   })
 })
 
+describe('modifying a person details', () => {
+  test('succeds when id is valid and user is authorized', async () => {
+    const validUser = {
+      username: 'mario',
+      password: 'password'
+    }
+
+    const loggedUser = await api
+      .post('/api/login')
+      .send(validUser)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    const personsAtStart = await helper.personsInDb()
+
+    const personToModify = personsAtStart[1]
+
+    const modifiedPerson = {
+      name: 'Homer Simpson',
+      number: '04 0000 0000'
+    }
+
+    await api
+      .put(`/api/persons/${personToModify.id}`)
+      .set('Authorization', `Bearer ${loggedUser.body.token}`)
+      .send(modifiedPerson)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    const personsAtEnd = await helper.personsInDb()
+    expect(personsAtEnd[1].number).toBe(modifiedPerson.number)
+  })
+
+  test('fails when id is valid but user is not authorized', async () => {
+    const invalidUser = {
+      username: 'luigi',
+      password: 'password'
+    }
+
+    const loggedUser = await api
+      .post('/api/login')
+      .send(invalidUser)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    const personsAtStart = await helper.personsInDb()
+
+    const personToModify = personsAtStart[1]
+
+    const modifiedPerson = {
+      name: 'Homer Simpson',
+      number: '04 0000 0000'
+    }
+
+    await api
+      .put(`/api/persons/${personToModify.id}`)
+      .set('Authorization', `Bearer ${loggedUser.body.token}`)
+      .send(modifiedPerson)
+      .expect(401)
+
+    const personsAtEnd = await helper.personsInDb()
+    expect(personsAtEnd[1].number).toBe(personsAtStart[1].number)
+  })
+})
+
 // close the database once all tests have run
 afterAll(async () => {
   await mongoose.connection.close()
