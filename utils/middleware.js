@@ -9,6 +9,18 @@ const requestLogger = (request, response, next) => {
   next()
 }
 
+// isolates jason web token from authorization header and places it into request.token to be accessed
+// when required.
+const tokenExtractor = (request, response, next) => {
+  const authorization = request.get('authorization')
+
+  if (authorization && authorization.startsWith('Bearer ')) {
+    request['token'] = authorization.substring(7)
+  }
+
+  next()
+}
+
 
 const unknownEndpoint = (request, response) => {
   response.status(404).send({ error: 'unknown endpoint' })
@@ -31,6 +43,7 @@ const errorHandler = (error, request, response, next) => {
 
 module.exports = {
   requestLogger,
+  tokenExtractor,
   unknownEndpoint,
   errorHandler
 }
