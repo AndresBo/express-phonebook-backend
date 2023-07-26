@@ -1,5 +1,7 @@
+const jwt = require('jsonwebtoken')
 const personsRouter = require('express').Router()
 const Person = require('../models/person')
+const User = require('../models/user')
 
 
 personsRouter.get('/info', async (request, response, next) => {
@@ -47,6 +49,20 @@ personsRouter.post('/', async (request, response, next) => {
   try {
     // get new person from request object
     const body = request.body
+
+    // check and decode user token
+    const decodedToken = jwt.verify(request.token, process.env.SECRET)
+
+    if (!decodedToken.id) {
+      return response.status(401).json({ error: 'token invalid' })
+    }
+    // find user trying to delete document
+    const user = await User.findById(decodedToken.id)
+    // check if user is admin
+    if (!user.admin) {
+      return response.status(401).json( { error: 'unauthorized to post new persons'} )
+    }
+
     // create new person object using Note constructor function
     const person = new Person({
       name: body.name,
