@@ -8,16 +8,28 @@ const api = supertest(app)
 
 const helper = require('./test_helper')
 const Person = require('../models/person')
+const User = require('../models/user')
 
-// clear and initialize the database by saving two notes before every test
+// clear and initialize the database by saving two users and two persons before every test
 beforeEach(async () => {
+  await User.deleteMany({})
+
+  for (let user of helper.initialUsers) {
+    await api
+      .post('/api/users')
+      .send(user)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+  }
+
   await Person.deleteMany({})
 
   for (let person of helper.initialPersons) {
     let personObject = new Person(person)
     await personObject.save()
   }
-})
+}, 15000)
 
 
 describe('when there is initially some persons saved', () => {
@@ -76,7 +88,18 @@ describe('viewing a specific person', () => {
 })
 
 describe('addition of a new person', () => {
-  test('succeeds with valid data', async () => {
+  test('succeeds when an authorized user, uses valid data', async () => {
+    const validUser = {
+      username: 'mario',
+      password: 'password'
+    }
+
+    const loggedUser = await api
+      .post('/api/login')
+      .send(validUser)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
     const newPerson = {
       name: 'Van Helsing',
       number: '04 0101 0101'
@@ -85,6 +108,7 @@ describe('addition of a new person', () => {
     await api
       .post('/api/persons')
       .send(newPerson)
+      .set('Authorization', `Bearer ${loggedUser.body.token}`)
       .expect(201)
       .expect('Content-Type', /application\/json/)
 
