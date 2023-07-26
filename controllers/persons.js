@@ -50,7 +50,8 @@ personsRouter.post('/', async (request, response, next) => {
     // get new person from request object
     const body = request.body
 
-    // check and decode user token
+    // check and decode user token - it returns Object on which token was based on.
+    // note that token is place in request.token by middleware tokenExtractor
     const decodedToken = jwt.verify(request.token, process.env.SECRET)
 
     if (!decodedToken.id) {
@@ -60,7 +61,7 @@ personsRouter.post('/', async (request, response, next) => {
     const user = await User.findById(decodedToken.id)
     // check if user is admin
     if (!user.admin) {
-      return response.status(401).json( { error: 'unauthorized to post new persons'} )
+      return response.status(401).json({ error: 'unauthorized to post new persons' })
     }
 
     // create new person object using Note constructor function
@@ -75,7 +76,6 @@ personsRouter.post('/', async (request, response, next) => {
   } catch(error) {
     next(error)
   }
-
 })
 
 personsRouter.put('/:id', async (request, response, next) => {
