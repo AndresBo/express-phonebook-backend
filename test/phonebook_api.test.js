@@ -164,6 +164,34 @@ describe('deletion of a person', () => {
 
     expect(personsAtEnd).not.toContain(personToDelete)
   })
+
+  test('fails with status code 401 when id is valid but user is unauthorized', async () => {
+    const unauthorizedUser = {
+      username: 'luigi',
+      password: 'password'
+    }
+
+    const loggedUser = await api
+      .post('/api/login')
+      .send(unauthorizedUser)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    const personsAtStart = await helper.personsInDb()
+
+    const personToDelete = personsAtStart[0]
+
+    await api
+      .delete(`/api/persons/${personToDelete.id}`)
+      .set('Authorization', `Bearer ${loggedUser.body.token}`)
+      .expect(401)
+
+    const personsAtEnd = await helper.personsInDb()
+
+    expect(personsAtEnd).toHaveLength(helper.initialPersons.length)
+
+    //expect(personsAtEnd).not.toContain(personToDelete)
+  })
 })
 
 describe('modifying a person details', () => {
