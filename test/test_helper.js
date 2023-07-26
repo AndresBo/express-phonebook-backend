@@ -12,6 +12,22 @@ const initialPersons = [
   },
 ]
 
+const initialUsers = [
+  {
+    username: 'mario',
+    name: 'Mario Mario',
+    password: 'password',
+    admin: true
+  },
+
+  {
+    username: 'luigi',
+    name: 'Luigi Mario',
+    password: 'password',
+    admin: false
+  }
+]
+
 const personsInDb = async () => {
   const persons = await Person.find({})
   return persons.map(person => person.toJSON())
@@ -36,6 +52,7 @@ const nonExistingId = async () => {
 
 module.exports = {
   initialPersons,
+  initialUsers,
   personsInDb,
   nonExistingId,
   usersInDb
