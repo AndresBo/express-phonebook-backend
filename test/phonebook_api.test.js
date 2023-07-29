@@ -99,7 +99,7 @@ describe('addition of a new person', () => {
       .send(validUser)
       .expect(200)
       .expect('Content-Type', /application\/json/)
-
+    console.log(loggedUser)
     const newPerson = {
       name: 'Van Helsing',
       number: '04 0101 0101'
@@ -119,7 +119,7 @@ describe('addition of a new person', () => {
     expect(names).toContain('Van Helsing')
   })
 
-  test('fails with status code 400 if data is invalid', async () => {
+  test('fails with status code 401 if data is invalid', async () => {
     // new person missing name property
     const newPerson = {
       number: '04 2123 2345'
@@ -128,7 +128,7 @@ describe('addition of a new person', () => {
     await api
       .post('/api/persons')
       .send(newPerson)
-      .expect(400)
+      .expect(401)
 
     const personsAtEnd = await helper.personsInDb()
 
