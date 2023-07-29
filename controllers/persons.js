@@ -101,7 +101,7 @@ personsRouter.put('/:id', async (request, response, next) => {
 
     const user = await User.findById(decodedToken.id)
     if (!user.admin) {
-      return response.status(401).json({ error: 'unauthorized to post new persons' })
+      return response.status(401).json({ error: 'unauthorized to make changes' })
     }
 
     const { name, number } = request.body
