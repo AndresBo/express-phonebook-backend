@@ -3,7 +3,7 @@ const personsRouter = require('express').Router()
 const Person = require('../models/person')
 const User = require('../models/user')
 
-
+// gets the number of persons and current date
 personsRouter.get('/info', async (request, response, next) => {
   try {
     const count = await Person.count()
@@ -15,11 +15,13 @@ personsRouter.get('/info', async (request, response, next) => {
 
 })
 
+// GETs all persons
 personsRouter.get('/', async (request, response) => {
   const persons = await Person.find({})
   response.json(persons)
 })
 
+// GETs a specific person
 personsRouter.get('/:id', async (request, response, next) => {
   try {
     const person = await Person.findById(request.params.id)
@@ -35,6 +37,7 @@ personsRouter.get('/:id', async (request, response, next) => {
   }
 })
 
+// DELETES a person
 personsRouter.delete('/:id', async (request, response, next) => {
   try {
     // check and decode user token - it returns Object on which token was based on.
@@ -59,6 +62,7 @@ personsRouter.delete('/:id', async (request, response, next) => {
   }
 })
 
+// POST a new person
 personsRouter.post('/', async (request, response, next) => {
   try {
     // get new person from request object
@@ -92,6 +96,7 @@ personsRouter.post('/', async (request, response, next) => {
   }
 })
 
+// PUT a person
 personsRouter.put('/:id', async (request, response, next) => {
   try {
     const decodedToken = jwt.verify(request.token, process.env.SECRET)
