@@ -16,7 +16,7 @@ usersRouter.post('/', async (request, response, next) => {
     if (!decodedToken.id) {
       return response.status(401).json({ error: 'token invalid' })
     }
-    // find user trying to delete document
+    // find user trying to create new user
     const user = await User.findById(decodedToken.id)
     // check if user is admin
     if (!user.admin) {
@@ -50,9 +50,26 @@ usersRouter.post('/', async (request, response, next) => {
   }
 })
 
-// // DELETE user
-// usersRouter.post('/:id', async (request, response, next) => {
-  
-// })
+// DELETE user
+usersRouter.delete('/:id', async (request, response, next) => {
+  try {
+    const decodedToken = jwt.verify(request.token, process.env.SECRET)
+    if (!decodedToken.id) {
+      return response.status(401).json({ error: 'token invalid' })
+    }
+    // find user trying to delete document
+    const user = await User.findById(decodedToken.id)
+    // check if user is admin
+    if (!user.admin) {
+      return response.status(401).json({ error: 'user unauthorized to delete users' })
+    }
+
+    await User.findByIdAndRemove(request.params.id)
+
+    response.status(204).end()
+  } catch (error) {
+    next(error)
+  }
+})
 
 module.exports = usersRouter
