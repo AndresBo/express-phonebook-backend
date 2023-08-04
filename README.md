@@ -1,6 +1,5 @@
 # Phonebook backend
 
-Backend deployed using Render [here](https://express-phonebook-backend.onrender.com/api/persons)
+Live [here](https://express-phonebook-backend.onrender.com/)
 
-
-TODO: - tests for posting new users
+Find frontend [here](https://github.com/AndresBo/phonebook-app)
